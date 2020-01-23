@@ -10,6 +10,10 @@ arcpy.env.overwriteOutput = True
 # Script parameters
 arcpy.env.workspace = arcpy.GetParameterAsText(0)
 
+# Variables
+BWI_New_Datasource = "Database Connections/bwi_pub@maa-dodb-19c.sde"
+MTN_New_Datasource = "Database Connections/mtn_pub@maa-dodb-19c.sde"
+
 for root, dirs, files in os.walk(arcpy.env.workspace):
 
     for f in files:
@@ -21,17 +25,17 @@ for root, dirs, files in os.walk(arcpy.env.workspace):
             for lyr in arcpy.mapping.ListLayers(mxd1):
                 if lyr.isGroupLayer == False:
                     arcpy.AddMessage(lyr.datasetName)
-                    if "BWI" in mxd:
+                    if "BWI" in mxd or "Redlines" in mxd:
                         if "Imagery" not in mxd:
                             if "GIS_MAP" not in mxd:
                                 if "bwi_pub@maa-dodb-19c" in lyr.dataSource:
                                        bwi_Message = "Already Updated -- " + lyr.name
                                        arcpy.AddMessage(bwi_Message)
-                                else:
+                                elif "sde" in lyr.dataSource:
                                     bwiPub_Message = "BWI--Replace Data Source for " + lyr.name
                                     arcpy.AddMessage(bwiPub_Message)
                                     lyr.replaceDataSource(
-                                        "C:\\Users\\dstarr\\AppData\\Roaming\\ESRI\\Desktop10.6\\ArcCatalog\\bwi_pub@maa-dodb-19c.sde",
+                                        BWI_New_Datasource,
                                         "SDE_WORKSPACE", lyr.datasetName, False)
                     else:
                         if "Imagery" not in mxd:
@@ -39,11 +43,11 @@ for root, dirs, files in os.walk(arcpy.env.workspace):
                                 if "mtn_pub@maa-dodb-19c" in lyr.dataSource:
                                     mtn_Message = "Already Updated -- " + lyr.name
                                     arcpy.AddMessage(mtn_Message)
-                                else:
+                                elif "sde" in lyr.dataSource:
                                     mtnPub_Message = "MTN--Replace Data Source for " + lyr.name
                                     arcpy.AddMessage(mtnPub_Message)
                                     lyr.replaceDataSource(
-                                        "C:\\Users\\dstarr\\AppData\\Roaming\\ESRI\\Desktop10.6\\ArcCatalog\\mtn_pub@maa-dodb-19c.sde",
+                                        MTN_New_Datasource,
                                         "SDE_WORKSPACE", lyr.datasetName, False)
 
                 # lyr.replaceDataSource("C:\\Users\\dstarr\\AppData\\Roaming\\ESRI\\Desktop10.6\\ArcCatalog\\RICS_Connection.sde", "SDE_WORKSPACE", "TEST")
